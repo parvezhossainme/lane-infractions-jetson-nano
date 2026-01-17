@@ -5,11 +5,11 @@ Test illegal stopping detection on video.
 
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import cv2
 import numpy as np
-from illegal_stopping_detector import IllegalStoppingDetector, ZoneType
+from violations.illegal_stopping import IllegalStoppingDetector, ZoneType
 from ultralytics import RTDETR
 
 

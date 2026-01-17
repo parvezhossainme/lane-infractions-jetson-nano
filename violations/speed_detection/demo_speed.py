@@ -5,11 +5,11 @@ Test speed detection on video or images.
 
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import cv2
 import numpy as np
-from speed_detector import SpeedDetector
+from violations.speed_detection import SpeedDetector
 from ultralytics import RTDETR
 
 
