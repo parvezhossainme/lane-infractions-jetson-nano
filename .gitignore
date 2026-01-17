@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VS Code
+.vscode/
+
+# Model weights
+*.pt
+*.pth
+*.onnx
+
+# Large data files
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+
+# RT-DETR repository (cloned separately)
+RT-DETR/
+
+# Output directories
+output/
+output*/
+runs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+pp.txt
