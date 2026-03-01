@@ -1,0 +1,37 @@
+ROOT: /home/parvezdev/fydp
+EXCLUDED_DIRS: RT-DETR, venv, outputs, __pycache__, .git
+PY_FILES_READ: 22
+TOTAL_LINES_READ: 3570
+READ_MODE: line-by-line full file iteration
+CONFIRMATION: every matching first-party .py file discovered was opened and read end-to-end.
+
+FILES_BY_FOLDER:
+[.]
+  - setup_rtdetr.py
+  - vehicle_detection.py
+  - vehicle_detection_simple.py
+[detectors]
+  - detectors/__init__.py
+  - detectors/check_setup.py
+  - detectors/lane_detection.py
+  - detectors/lane_detection_save.py
+  - detectors/vehicle_detection_ultra.py
+[tests]
+  - tests/test_all_detectors.py
+  - tests/test_illegal_stopping.py
+  - tests/test_lane_violation.py
+  - tests/test_speed_detection.py
+[violations]
+  - violations/__init__.py
+[violations/illegal_stopping]
+  - violations/illegal_stopping/__init__.py
+  - violations/illegal_stopping/demo_illegal_stopping.py
+  - violations/illegal_stopping/illegal_stopping_detector.py
+[violations/lane_violation]
+  - violations/lane_violation/__init__.py
+  - violations/lane_violation/demo_lane_violation.py
+  - violations/lane_violation/lane_violation_detector.py
+[violations/speed_detection]
+  - violations/speed_detection/__init__.py
+  - violations/speed_detection/demo_speed.py
+  - violations/speed_detection/speed_detector.py
