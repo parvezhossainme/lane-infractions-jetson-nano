@@ -215,7 +215,7 @@ def main():
     print(f"\nSaving results to {output_dir}/")
     save_visualization(img, roi_poly, lane_binary, final, output_dir)
     
-    print(f"\n✅ Lane detection complete! Results saved to {output_dir}/")
+    print(f"\n[OK] Lane detection complete! Results saved to {output_dir}/")
 
 
 if __name__ == "__main__":

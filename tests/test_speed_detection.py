@@ -21,7 +21,7 @@ def create_synthetic_video(image_path: str, output_path: str = "outputs/tests/sp
     
     # Load image and detect vehicles
     image = cv2.imread(image_path)
-    model = RTDETR('rtdetr-l.pt')
+    model = RTDETR('models/rtdetr-l.pt')
     results = model(image, conf=0.5, verbose=False)
     
     # Extract initial detections
@@ -128,5 +128,5 @@ if __name__ == "__main__":
         sys.exit(1)
     
     create_synthetic_video(image_path)
-    print("\n✅ Speed detection test complete!")
+    print("\n[OK] Speed detection test complete!")
     print("View the output video to see speed tracking in action.")

@@ -20,11 +20,11 @@ VEHICLE_CLASSES = [2, 3, 5, 7]  # car, motorcycle, bus, truck
 CLASS_NAMES = {2: "car", 3: "motorcycle", 5: "bus", 7: "truck"}
 
 
-def load_model(model_path: str = "rtdetr-l.pt"):
+def load_model(model_path: str = "models/rtdetr-l.pt"):
     print("Loading RT-DETR model...")
     print("(First run may download model weights)")
     model = RTDETR(model_path)
-    print("✅ Model loaded")
+    print("[OK] Model loaded")
     return model
 
 
@@ -84,7 +84,7 @@ def extract_and_check_frames(
 
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print(f"❌ Error: Could not open video for frame checks: {video_path}")
+        print(f"[ERROR] Error: Could not open video for frame checks: {video_path}")
         return []
 
     frame_idx = 0
@@ -112,13 +112,13 @@ def extract_and_check_frames(
                     "saved_frame": frame_file,
                 }
             )
-            print(f"  ✅ Checked frame {frame_idx}: {len(detections)} vehicles")
+            print(f"  [OK] Checked frame {frame_idx}: {len(detections)} vehicles")
             checked += 1
 
         frame_idx += 1
 
     cap.release()
-    print(f"✅ Frame checks saved in: {frames_dir}")
+    print(f"[OK] Frame checks saved in: {frames_dir}")
     return check_summary
 
 
@@ -132,7 +132,7 @@ def process_video(
     """Run full video detection and save annotated output video."""
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print(f"❌ Error: Could not open video: {video_path}")
+        print(f"[ERROR] Error: Could not open video: {video_path}")
         return None
 
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -150,7 +150,7 @@ def process_video(
     writer = cv2.VideoWriter(output_video, fourcc, fps, (width, height))
     if not writer.isOpened():
         cap.release()
-        print(f"❌ Error: Could not create output file: {output_video}")
+        print(f"[ERROR] Error: Could not create output file: {output_video}")
         return None
 
     print("\nProcessing full video detection...")
@@ -198,7 +198,7 @@ def process_video(
         "confidence_threshold": confidence,
     }
 
-    print("✅ Video output saved")
+    print("[OK] Video output saved")
     return stats
 
 
@@ -213,7 +213,7 @@ def main():
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
-        print(f"❌ Error: Video not found: {args.input}")
+        print(f"[ERROR] Error: Video not found: {args.input}")
         raise SystemExit(1)
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -222,7 +222,7 @@ def main():
     print("Vehicle Detection (Video) using RT-DETR")
     print("=" * 70)
 
-    model = load_model("rtdetr-l.pt")
+    model = load_model("models/rtdetr-l.pt")
 
     frame_checks = extract_and_check_frames(
         video_path=args.input,
@@ -252,7 +252,7 @@ def main():
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
 
-    print(f"✅ Report saved: {report_path}")
+    print(f"[OK] Report saved: {report_path}")
     print("🎉 Video vehicle detection complete")
 
 

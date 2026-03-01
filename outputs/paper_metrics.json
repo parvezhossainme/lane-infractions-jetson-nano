@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-02-28T14:55:55",
+  "model": "models/rtdetr-l.pt",
+  "runtime": {
+    "image": "/home/parvezdev/fydp/samples/images/IMG_20250813_161847.jpg",
+    "params_m": 32.970476,
+    "latency_ms_mean": 26.84209425001427,
+    "latency_ms_median": 26.588533499989353,
+    "latency_ms_std": 0.6264818695212836,
+    "fps_mean": 37.25491724623791,
+    "warmup_runs": 5,
+    "timed_runs": 20,
+    "device_cuda_available": true,
+    "device_name": "NVIDIA GeForce RTX 4050 Laptop GPU"
+  },
+  "detection": {
+    "dataset": "coco8.yaml",
+    "split": "val",
+    "mAP50": 0.8937731481481482,
+    "precision": 0.8715593866789275,
+    "recall": 0.8771987911004023,
+    "f1_score": 0.8743699958993838,
+    "status": "ok",
+    "error": null,
+    "dataset_source": "fallback"
+  }
+}

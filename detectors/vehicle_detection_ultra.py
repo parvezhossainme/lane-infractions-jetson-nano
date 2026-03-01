@@ -26,23 +26,23 @@ def detect_vehicles(image_path, output_dir="output", confidence=0.5):
     """
     # Check if image exists
     if not os.path.exists(image_path):
-        print(f"❌ Error: Image not found: {image_path}")
+        print(f"[ERROR] Error: Image not found: {image_path}")
         return False
     
     # Load image
     print(f"Loading image: {image_path}")
     img = cv2.imread(image_path)
     if img is None:
-        print(f"❌ Error: Could not read image")
+        print(f"[ERROR] Error: Could not read image")
         return False
     
-    print(f"✅ Image loaded: {img.shape}")
+    print(f"[OK] Image loaded: {img.shape}")
     
     # Load RT-DETR model (auto-downloads on first run)
     print("\nLoading RT-DETR model...")
     print("(First run will download the model ~45MB)")
-    model = RTDETR('rtdetr-l.pt')  # RT-DETR Large model
-    print("✅ Model loaded")
+    model = RTDETR('models/rtdetr-l.pt')  # RT-DETR Large model
+    print("[OK] Model loaded")
     
     # Run detection
     print(f"\nRunning detection (confidence >= {confidence})...")
@@ -64,7 +64,7 @@ def detect_vehicles(image_path, output_dir="output", confidence=0.5):
                 'bbox': box.xyxy[0].cpu().numpy()
             })
     
-    print(f"\n✅ Detected {len(vehicle_detections)} vehicles:")
+    print(f"\n[OK] Detected {len(vehicle_detections)} vehicles:")
     for i, det in enumerate(vehicle_detections, 1):
         print(f"  {i}. {det['class_name']}: {det['confidence']:.2f}")
     
@@ -89,11 +89,11 @@ def detect_vehicles(image_path, output_dir="output", confidence=0.5):
     # Save result
     output_path = os.path.join(output_dir, 'vehicle_detection.jpg')
     cv2.imwrite(output_path, output_img)
-    print(f"\n✅ Result saved to: {output_path}")
+    print(f"\n[OK] Result saved to: {output_path}")
     
     # Also save the ultralytics annotated version
     result.save(filename=os.path.join(output_dir, 'vehicle_detection_full.jpg'))
-    print(f"✅ Full detection saved to: {output_dir}/vehicle_detection_full.jpg")
+    print(f"[OK] Full detection saved to: {output_dir}/vehicle_detection_full.jpg")
     
     return True
 

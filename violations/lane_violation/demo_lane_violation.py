@@ -77,7 +77,7 @@ def run_lane_violation_detection(video_path: str, output_path: str = "output/lan
     """
     # Initialize
     print("Loading RT-DETR model...")
-    model = RTDETR('rtdetr-l.pt')
+    model = RTDETR('models/rtdetr-l.pt')
     
     print("Initializing lane violation detector...")
     lane_detector = LaneViolationDetector(

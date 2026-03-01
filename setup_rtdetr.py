@@ -47,14 +47,14 @@ def verify_pytorch():
     
     try:
         import torch
-        print(f"✅ PyTorch {torch.__version__} found")
-        print(f"✅ CUDA available: {torch.cuda.is_available()}")
+        print(f"[OK] PyTorch {torch.__version__} found")
+        print(f"[OK] CUDA available: {torch.cuda.is_available()}")
         if torch.cuda.is_available():
-            print(f"✅ CUDA version: {torch.version.cuda}")
-            print(f"✅ GPU: {torch.cuda.get_device_name(0)}")
+            print(f"[OK] CUDA version: {torch.version.cuda}")
+            print(f"[OK] GPU: {torch.cuda.get_device_name(0)}")
         return True
     except ImportError:
-        print("❌ PyTorch not found!")
+        print("[ERROR] PyTorch not found!")
         print("Please install PyTorch first: pip install torch torchvision")
         return False
 
@@ -83,10 +83,10 @@ def clone_rtdetr():
         return False
     
     if not os.path.exists("RT-DETR/rtdetr_pytorch"):
-        print("❌ RT-DETR PyTorch directory not found!")
+        print("[ERROR] RT-DETR PyTorch directory not found!")
         return False
     
-    print("✅ RT-DETR cloned successfully")
+    print("[OK] RT-DETR cloned successfully")
     return True
 
 
@@ -115,7 +115,7 @@ def install_rtdetr_dependencies():
                 check=False  # Don't fail if optional deps fail
             )
         
-        print("✅ Dependencies installed")
+        print("[OK] Dependencies installed")
         return True
         
     finally:
@@ -147,10 +147,10 @@ def download_model():
     )
     
     if success and os.path.exists(checkpoint_file):
-        print(f"✅ Model downloaded: {checkpoint_file}")
+        print(f"[OK] Model downloaded: {checkpoint_file}")
         return True
     else:
-        print("❌ Model download failed!")
+        print("[ERROR] Model download failed!")
         print(f"Please download manually from: {model_url}")
         return False
 
@@ -171,9 +171,9 @@ def verify_setup():
     all_good = True
     for name, path in checks.items():
         if os.path.exists(path):
-            print(f"✅ {name}")
+            print(f"[OK] {name}")
         else:
-            print(f"❌ {name} - Not found: {path}")
+            print(f"[ERROR] {name} - Not found: {path}")
             all_good = False
     
     return all_good
@@ -195,26 +195,26 @@ sys.path.insert(0, 'RT-DETR/rtdetr_pytorch')
 
 try:
     from src.core import YAMLConfig
-    print("✅ RT-DETR imports successful!")
+    print("[OK] RT-DETR imports successful!")
     
     import torch
-    print(f"✅ PyTorch {torch.__version__}")
-    print(f"✅ CUDA available: {torch.cuda.is_available()}")
+    print(f"[OK] PyTorch {torch.__version__}")
+    print(f"[OK] CUDA available: {torch.cuda.is_available()}")
     
     config_path = 'RT-DETR/rtdetr_pytorch/configs/rtdetr/rtdetr_r50vd_6x_coco.yml'
     checkpoint_path = 'RT-DETR/rtdetr_pytorch/checkpoints/rtdetr_r50vd_coco.pth'
     
     if os.path.exists(checkpoint_path):
-        print(f"✅ Model checkpoint found")
+        print(f"[OK] Model checkpoint found")
         print("\\n🎉 RT-DETR setup is complete and working!")
         print("\\nTo run vehicle detection:")
         print("  python vehicle_detection_simple.py IMG_20250813_161947.jpg")
     else:
-        print("❌ Model checkpoint not found")
+        print("[ERROR] Model checkpoint not found")
         sys.exit(1)
         
 except Exception as e:
-    print(f"❌ Error: {e}")
+    print(f"[ERROR] Error: {e}")
     sys.exit(1)
 """
     
@@ -222,7 +222,7 @@ except Exception as e:
         f.write(test_script)
     
     os.chmod("test_rtdetr.py", 0o755)
-    print("✅ Created test_rtdetr.py")
+    print("[OK] Created test_rtdetr.py")
 
 
 def main():
@@ -236,26 +236,26 @@ def main():
     
     # Step 2: Verify PyTorch
     if not verify_pytorch():
-        print("\n❌ Setup failed: PyTorch not found")
+        print("\n[ERROR] Setup failed: PyTorch not found")
         sys.exit(1)
     
     # Step 3: Clone RT-DETR
     if not clone_rtdetr():
-        print("\n❌ Setup failed: Could not clone RT-DETR")
+        print("\n[ERROR] Setup failed: Could not clone RT-DETR")
         sys.exit(1)
     
     # Step 4: Install dependencies
     if not install_rtdetr_dependencies():
-        print("\n⚠️  Some dependencies failed but continuing...")
+        print("\n[WARN]  Some dependencies failed but continuing...")
     
     # Step 5: Download model
     if not download_model():
-        print("\n❌ Setup failed: Could not download model")
+        print("\n[ERROR] Setup failed: Could not download model")
         sys.exit(1)
     
     # Step 6: Verify everything
     if not verify_setup():
-        print("\n❌ Setup verification failed")
+        print("\n[ERROR] Setup verification failed")
         sys.exit(1)
     
     # Step 7: Create test script
@@ -263,7 +263,7 @@ def main():
     
     # Success!
     print("\n" + "="*60)
-    print("✅ RT-DETR Setup Complete!")
+    print("[OK] RT-DETR Setup Complete!")
     print("="*60)
     print("\nTest the setup:")
     print("  python test_rtdetr.py")

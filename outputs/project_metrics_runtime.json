@@ -1,0 +1,13 @@
+{
+  "image": "/home/parvezdev/fydp/samples/images/IMG_20250813_161847.jpg",
+  "model": "RT-DETR-L (Ultralytics, models/rtdetr-l.pt)",
+  "params_m": 32.970476,
+  "latency_ms_mean": 26.75286236665973,
+  "latency_ms_median": 26.70560400008526,
+  "latency_ms_std": 0.5022657850565061,
+  "fps_mean": 37.37917783505035,
+  "warmup_runs": 10,
+  "timed_runs": 60,
+  "device_cuda_available": true,
+  "device_name": "NVIDIA GeForce RTX 4050 Laptop GPU"
+}

@@ -48,7 +48,7 @@ def check_rtdetr_setup():
         errors.append("Pretrained model not found. Download it first.")
     
     if errors:
-        print("❌ RT-DETR Setup Issues:")
+        print("[ERROR] RT-DETR Setup Issues:")
         for i, error in enumerate(errors, 1):
             print(f"  {i}. {error}")
         print("\n📋 Setup Instructions:")

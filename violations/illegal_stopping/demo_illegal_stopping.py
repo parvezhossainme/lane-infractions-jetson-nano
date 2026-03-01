@@ -23,7 +23,7 @@ def run_illegal_stopping_detection(video_path: str, output_path: str = "output/i
     """
     # Initialize
     print("Loading RT-DETR model...")
-    model = RTDETR('rtdetr-l.pt')
+    model = RTDETR('models/rtdetr-l.pt')
     
     print("Initializing illegal stopping detector...")
     detector = IllegalStoppingDetector(

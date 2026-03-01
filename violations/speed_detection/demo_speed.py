@@ -23,7 +23,7 @@ def run_speed_detection(video_path: str, output_path: str = "output/speed_detect
     """
     # Initialize detector and model
     print("Loading RT-DETR model...")
-    model = RTDETR('rtdetr-l.pt')
+    model = RTDETR('models/rtdetr-l.pt')
     
     print("Initializing speed detector...")
     speed_detector = SpeedDetector(

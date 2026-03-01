@@ -22,9 +22,9 @@ try:
     image_path = "/home/parvezdev/fydp/samples/images/IMG_20250813_161947.jpg"
     
     if not os.path.exists(image_path):
-        print(f"❌ Sample image not found: {image_path}")
+        print(f"[ERROR] Sample image not found: {image_path}")
     else:
-        model = RTDETR('rtdetr-l.pt')
+        model = RTDETR('models/rtdetr-l.pt')
         image = cv2.imread(image_path)
         results = model(image, conf=0.5, verbose=False)
         
@@ -34,7 +34,7 @@ try:
             if cls_id in [2, 3, 5, 7]:  # Cars, motorcycles, buses, trucks
                 vehicle_count += 1
         
-        print(f"✅ Vehicle Detection: Detected {vehicle_count} vehicles")
+        print(f"[OK] Vehicle Detection: Detected {vehicle_count} vehicles")
         
         # Save visualization
         os.makedirs("outputs/tests", exist_ok=True)
@@ -43,7 +43,7 @@ try:
         print(f"   Output saved: outputs/tests/vehicle_detection_test.jpg")
         
 except Exception as e:
-    print(f"❌ Vehicle Detection Test Failed: {str(e)}")
+    print(f"[ERROR] Vehicle Detection Test Failed: {str(e)}")
 
 # Test 2: Lane Detection
 print("\n[TEST 2] Testing Lane Detection...")
@@ -58,14 +58,14 @@ try:
     lanes = detect_lanes(processed, image)
     
     if lanes is not None and len(lanes) > 0:
-        print(f"✅ Lane Detection: Detected lane lines")
+        print(f"[OK] Lane Detection: Detected lane lines")
         cv2.imwrite("outputs/tests/lane_detection_test.jpg", image)
         print(f"   Output saved: outputs/tests/lane_detection_test.jpg")
     else:
-        print("⚠️  Lane Detection: No lanes detected (normal for some images)")
+        print("[WARN]  Lane Detection: No lanes detected (normal for some images)")
         
 except Exception as e:
-    print(f"❌ Lane Detection Test Failed: {str(e)}")
+    print(f"[ERROR] Lane Detection Test Failed: {str(e)}")
 
 # Test 3: Speed Detection (Synthetic Test)
 print("\n[TEST 3] Testing Speed Detection Module...")
@@ -92,11 +92,11 @@ try:
     test_detections[0]['bbox'] = [150, 200, 200, 250]  # Moved 50 pixels
     violations = detector.update(test_detections, 0.5)
     
-    print(f"✅ Speed Detection: Module initialized successfully")
+    print(f"[OK] Speed Detection: Module initialized successfully")
     print(f"   Tracked {len(detector.tracks)} vehicles")
     
 except Exception as e:
-    print(f"❌ Speed Detection Test Failed: {str(e)}")
+    print(f"[ERROR] Speed Detection Test Failed: {str(e)}")
 
 # Test 4: Lane Violation Detection (LSTM)
 print("\n[TEST 4] Testing Lane Violation Detection with LSTM...")
@@ -120,12 +120,12 @@ try:
         test_detections[0]['bbox'] = [100+i*5, 200, 150+i*5, 250]
         violations = detector.update(test_detections, i, i * 0.033)
     
-    print(f"✅ Lane Violation Detection: LSTM module initialized")
+    print(f"[OK] Lane Violation Detection: LSTM module initialized")
     print(f"   Tracked {len(detector.trajectories)} vehicles")
     print(f"   Model: TrajectoryLSTM with {sum(p.numel() for p in detector.model.parameters())} parameters")
     
 except Exception as e:
-    print(f"❌ Lane Violation Detection Test Failed: {str(e)}")
+    print(f"[ERROR] Lane Violation Detection Test Failed: {str(e)}")
 
 # Test 5: Illegal Stopping Detection
 print("\n[TEST 5] Testing Illegal Stopping Detection...")
@@ -151,12 +151,12 @@ try:
     for t in range(10):
         violations = detector.update(test_detections, t * 0.5)
     
-    print(f"✅ Illegal Stopping Detection: Module initialized")
+    print(f"[OK] Illegal Stopping Detection: Module initialized")
     print(f"   Defined {len(detector.zones)} regulation zones")
     print(f"   Tracked {len(detector.vehicles)} vehicles")
     
 except Exception as e:
-    print(f"❌ Illegal Stopping Detection Test Failed: {str(e)}")
+    print(f"[ERROR] Illegal Stopping Detection Test Failed: {str(e)}")
 
 # Test 6: Integration Test with Real Image
 print("\n[TEST 6] Running Integration Test on Sample Image...")
@@ -165,7 +165,7 @@ try:
     image = cv2.imread(image_path)
     
     # Detect vehicles
-    model = RTDETR('rtdetr-l.pt')
+    model = RTDETR('models/rtdetr-l.pt')
     results = model(image, conf=0.5, verbose=False)
     
     # Extract detections
@@ -194,11 +194,11 @@ try:
     stop_det.add_zone(0, 0, image.shape[1]//3, image.shape[0], ZoneType.NO_STOPPING, 0)
     stop_violations = stop_det.update(detections, 0.0)
     
-    print(f"✅ Integration Test Passed")
+    print(f"[OK] Integration Test Passed")
     print(f"   Processed {len(detections)} vehicles through all detectors")
     
 except Exception as e:
-    print(f"❌ Integration Test Failed: {str(e)}")
+    print(f"[ERROR] Integration Test Failed: {str(e)}")
 
 # Summary
 print("\n" + "="*70)

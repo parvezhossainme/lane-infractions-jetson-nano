@@ -1,0 +1,27 @@
+{
+  "video_stats": {
+    "input_video": "samples/videos/Sample-Main.mp4",
+    "output_video": "outputs/output/Sample-Main_vehicle_detection.mp4",
+    "frames_processed": 30,
+    "peak_vehicles_in_frame": 25,
+    "average_vehicles_per_frame": 20.9,
+    "confidence_threshold": 0.5
+  },
+  "frame_checks": [
+    {
+      "frame_index": 0,
+      "vehicles_detected": 19,
+      "saved_frame": "outputs/output/frame_checks/frame_000000.jpg"
+    },
+    {
+      "frame_index": 30,
+      "vehicles_detected": 20,
+      "saved_frame": "outputs/output/frame_checks/frame_000030.jpg"
+    },
+    {
+      "frame_index": 60,
+      "vehicles_detected": 23,
+      "saved_frame": "outputs/output/frame_checks/frame_000060.jpg"
+    }
+  ]
+}

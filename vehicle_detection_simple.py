@@ -34,7 +34,7 @@ def load_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = cfg.model.to(device).eval()
     
-    print(f"✅ Model loaded on {device}")
+    print(f"[OK] Model loaded on {device}")
     return model, device
 
 
@@ -87,7 +87,7 @@ def visualize_detections(img, boxes, labels, scores, save_path="output/vehicle_d
     h, w = img.shape[:2]
     output = img.copy()
     
-    print(f"\n✅ Detected {len(boxes)} vehicles:")
+    print(f"\n[OK] Detected {len(boxes)} vehicles:")
     
     for i, (box, label, score) in enumerate(zip(boxes, labels, scores), 1):
         # Convert box format
@@ -123,7 +123,7 @@ def visualize_detections(img, boxes, labels, scores, save_path="output/vehicle_d
     os.makedirs("output", exist_ok=True)
     output_bgr = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
     cv2.imwrite(save_path, output_bgr)
-    print(f"\n✅ Result saved to: {save_path}")
+    print(f"\n[OK] Result saved to: {save_path}")
     
     return output
 
@@ -139,12 +139,12 @@ def main():
     
     # Check if image exists
     if not os.path.exists(image_path):
-        print(f"❌ Error: Image not found: {image_path}")
+        print(f"[ERROR] Error: Image not found: {image_path}")
         sys.exit(1)
     
     # Check if RT-DETR is set up
     if not os.path.exists('RT-DETR/rtdetr_pytorch/checkpoints/rtdetr_r50vd_coco.pth'):
-        print("❌ RT-DETR not set up!")
+        print("[ERROR] RT-DETR not set up!")
         print("Run: python setup_rtdetr.py")
         sys.exit(1)
     
@@ -152,11 +152,11 @@ def main():
     print(f"Loading image: {image_path}")
     img = cv2.imread(image_path)
     if img is None:
-        print(f"❌ Error: Could not read image: {image_path}")
+        print(f"[ERROR] Error: Could not read image: {image_path}")
         sys.exit(1)
     
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    print(f"✅ Image loaded: {img.shape}")
+    print(f"[OK] Image loaded: {img.shape}")
     
     # Load model
     model, device = load_model()

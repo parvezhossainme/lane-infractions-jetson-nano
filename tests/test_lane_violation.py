@@ -21,7 +21,7 @@ def create_lane_violation_test(image_path: str, output_path: str = "outputs/test
     
     # Load image and detect vehicles
     image = cv2.imread(image_path)
-    model = RTDETR('rtdetr-l.pt')
+    model = RTDETR('models/rtdetr-l.pt')
     results = model(image, conf=0.5, verbose=False)
     
     # Extract initial detections
@@ -135,5 +135,5 @@ if __name__ == "__main__":
         sys.exit(1)
     
     create_lane_violation_test(image_path)
-    print("\n✅ Lane violation detection test complete!")
+    print("\n[OK] Lane violation detection test complete!")
     print("The LSTM model predicted trajectories and detected deviations.")

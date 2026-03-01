@@ -1,46 +1,48 @@
-# Python
+# Python caches and builds
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-venv/
-ENV/
 *.egg-info/
 dist/
 build/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Virtual environments
+venv/
+ENV/
+.venv/
 
-# VS Code
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor / OS
 .vscode/
-
-# Model weights
-*.pt
-*.pth
-*.onnx
-
-# Large data files
-*.jpg
-*.jpeg
-*.png
-*.mp4
-*.avi
-
-# RT-DETR repository (cloned separately)
-RT-DETR/
-
-# Output directories
-output/
-output*/
-runs/
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Temporary files
+# Logs / temp
 *.log
 *.tmp
-pp.txt
+
+# Vendor / external repositories
+RT-DETR/
+
+# Runtime outputs
+runs/
+output/
+output*/
+
+# Never upload videos
+*.mp4
+*.avi
+
+# Explicit video folders
+samples/videos/
+
+# Model weights: ignore all, keep required local model path trackable
+*.pt
+*.pth
+*.onnx
+!models/
+!models/rtdetr-l.pt

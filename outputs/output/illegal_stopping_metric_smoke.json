@@ -1,0 +1,35 @@
+{
+  "video": {
+    "input_path": "samples/videos/Sample-Main.mp4",
+    "output_path": "outputs/output/illegal_stopping_metric_smoke.mp4",
+    "input_frames": 903,
+    "output_frames": 20,
+    "input_fps": 30.0,
+    "output_fps": 30.0,
+    "input_duration_sec": 30.1,
+    "output_duration_sec": 0.6666666666666666,
+    "duration_match": false
+  },
+  "illegal_stopping": {
+    "frames_processed": 20,
+    "total_violations": 0,
+    "violation_types": {},
+    "zones_configured": 4,
+    "stationary_time_sec": 3.0,
+    "movement_threshold_px": 5.0
+  },
+  "required_metrics": {
+    "FPS": 7.189935171839372,
+    "Latency_ms": 130.58277649997763,
+    "Latency_ms_median": 88.47866299993257,
+    "Params_M": 32.970476,
+    "mAP50": 0.8937731481481482,
+    "F1_Score": 0.8743699958993838,
+    "Precision": 0.8715593866789275,
+    "Recall": 0.8771987911004023
+  },
+  "metric_sources": {
+    "runtime_fps_latency": "Computed during this illegal-stopping metric run",
+    "params_map_f1_precision_recall": "outputs/paper_metrics.json"
+  }
+}
