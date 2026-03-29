@@ -1,0 +1,8 @@
+[
+  {
+    "name": "rtdetrv2-mobilenetv3-large",
+    "config": "rt-detr-backbones/mobilenet/rtdetrv2_mobilenetv3_large_120e_coco.yml",
+    "checkpoint": "/home/parvezdev/fydp/outputs/mobilenet_train_coco8/best.pth",
+    "checkpoint_mode": "resume"
+  }
+]

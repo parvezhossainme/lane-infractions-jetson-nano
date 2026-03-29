@@ -1,0 +1,6 @@
+__include__: [
+  '../../RT-DETR/rtdetrv2_pytorch/configs/rtdetrv2/rtdetrv2_r50vd_6x_coco.yml',
+]
+
+# Dedicated output location for Res50 evaluation runs.
+output_dir: ./output/rtdetrv2_res50_6x_coco_eval

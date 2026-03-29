@@ -1,0 +1,10 @@
+__include__:
+  - ../../RT-DETR/rtdetr_pytorch/configs/rtdetr/rtdetr_regnet_6x_coco.yml
+
+# Keep outputs under the unified benchmark structure.
+output_dir: /home/parvezdev/fydp/outputs/backbone_benchmark/regnet_coco8/rtdetr-regnet
+
+val_dataloader:
+  dataset:
+    img_folder: /home/parvezdev/fydp/datasets/coco8/images/val
+    ann_file: /home/parvezdev/fydp/datasets/coco8/annotations/instances_val2017.json

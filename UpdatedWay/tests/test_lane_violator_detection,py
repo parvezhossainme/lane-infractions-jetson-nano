@@ -1,0 +1,329 @@
+"""
+Lane violator detection test for UpdatedWay.
+
+Rule implemented:
+- If a vehicle box stays over a lane boundary band for a minimum time,
+  mark it as a lane violation.
+
+This script intentionally reuses the lane geometry/alignment approach from
+UpdatedWay/detectors/OnlyLaneDetect.py.
+"""
+
+from __future__ import annotations
+
+import math
+from datetime import datetime
+from pathlib import Path
+
+import cv2
+import numpy as np
+from ultralytics import RTDETR
+
+
+ROOT = Path(__file__).resolve().parents[2]
+VIDEO_PATH = ROOT / "samples/videos/Sample-Main.mp4"
+OUTPUT_DIR = ROOT / "UpdatedWay/outputs"
+MODEL_PATH = ROOT / "models/rtdetr-l.pt"
+
+VEHICLE_CLASSES = {2, 3, 5, 7}
+
+
+def get_unique_output_path(directory: Path, base_name: str = "lane_violator_test", ext: str = ".mp4") -> Path:
+	directory.mkdir(parents=True, exist_ok=True)
+	timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+	candidate = directory / f"{base_name}_{timestamp}{ext}"
+	if not candidate.exists():
+		return candidate
+
+	idx = 1
+	while True:
+		candidate = directory / f"{base_name}_{timestamp}_{idx:02d}{ext}"
+		if not candidate.exists():
+			return candidate
+		idx += 1
+
+
+def create_video_writer(path: Path, fps: float, size: tuple[int, int]) -> cv2.VideoWriter:
+	writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"mp4v"), fps, size)
+	if writer.isOpened():
+		return writer
+	raise RuntimeError(f"Failed to open video writer for {path}")
+
+
+def nearest_tracker_id(cx: int, cy: int, tracks: dict[int, tuple[int, int]], max_match_distance: float) -> int | None:
+	matched = None
+	min_dist = 1e9
+	for tid, (px, py) in tracks.items():
+		d = math.hypot(cx - px, cy - py)
+		if d < min_dist and d < max_match_distance:
+			min_dist = d
+			matched = tid
+	return matched
+
+
+def main() -> None:
+	if not VIDEO_PATH.exists():
+		raise FileNotFoundError(f"Video not found: {VIDEO_PATH}")
+	if not MODEL_PATH.exists():
+		raise FileNotFoundError(f"Model not found: {MODEL_PATH}")
+
+	cap = cv2.VideoCapture(str(VIDEO_PATH))
+	if not cap.isOpened():
+		raise RuntimeError(f"Unable to open input video: {VIDEO_PATH}")
+
+	fps = cap.get(cv2.CAP_PROP_FPS)
+	if fps <= 0:
+		fps = 30.0
+	width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+	height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+	total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+	output_path = get_unique_output_path(OUTPUT_DIR)
+	out = create_video_writer(output_path, fps, (width, height))
+
+	model = RTDETR(str(MODEL_PATH))
+
+	# Same lane setup pattern as OnlyLaneDetect.py
+	ret_ref, reference_frame = cap.read()
+	if not ret_ref:
+		cap.release()
+		out.release()
+		raise RuntimeError("Unable to read reference frame")
+
+	reference_gray = cv2.cvtColor(reference_frame, cv2.COLOR_BGR2GRAY)
+	feature_mask = np.zeros_like(reference_gray)
+	cv2.rectangle(feature_mask, (0, 0), (int(0.24 * width), height - 1), 255, -1)
+	cv2.rectangle(feature_mask, (int(0.76 * width), 0), (width - 1, height - 1), 255, -1)
+	cv2.rectangle(feature_mask, (0, 0), (width - 1, int(0.22 * height)), 255, -1)
+
+	reference_points = cv2.goodFeaturesToTrack(
+		reference_gray,
+		maxCorners=600,
+		qualityLevel=0.01,
+		minDistance=8,
+		mask=feature_mask,
+	)
+
+	top_y = int(0.05 * height)
+	bottom_y = height - 1
+	lane12_shift_px = int(0.015 * width)
+
+	lane4 = np.array(
+		[[(int(-0.12 * width), bottom_y), (int(0.2 * width), bottom_y), (int(0.41 * width), top_y), (int(0.385 * width), top_y)]],
+		np.int32,
+	)
+	lane3 = np.array(
+		[[(int(0.2 * width), bottom_y), (int(0.53 * width), bottom_y), (int(0.446 * width), top_y), (int(0.41 * width), top_y)]],
+		np.int32,
+	)
+	lane2 = np.array(
+		[[
+			(int(0.53 * width) + lane12_shift_px, bottom_y),
+			(int(0.81 * width) + lane12_shift_px, bottom_y),
+			(int(0.485 * width) + lane12_shift_px, top_y),
+			(int(0.446 * width) + lane12_shift_px, top_y),
+		]],
+		np.int32,
+	)
+	lane1 = np.array(
+		[[
+			(int(0.81 * width) + lane12_shift_px, bottom_y),
+			(min(width - 1, int(width) + lane12_shift_px), bottom_y),
+			(int(0.53 * width) + lane12_shift_px, top_y),
+			(int(0.485 * width) + lane12_shift_px, top_y),
+		]],
+		np.int32,
+	)
+	base_lanes = [lane1, lane2, lane3, lane4]
+
+	lane_overlay_template = np.zeros((height, width, 3), dtype=np.uint8)
+	lane_mask_template = np.zeros((height, width), dtype=np.uint8)
+
+	lane_colors = [
+		((0, 140, 255), "Lane1"),
+		((255, 170, 0), "Lane2"),
+		((60, 220, 60), "Lane3"),
+		((220, 80, 255), "Lane4"),
+	]
+	for i, lane in enumerate(base_lanes):
+		color, label = lane_colors[i]
+		cv2.fillPoly(lane_mask_template, lane, 255)
+		cv2.polylines(lane_overlay_template, lane, True, color, 4)
+		cx = int(np.mean(lane[0][:, 0]))
+		cy = int(np.mean(lane[0][:, 1]))
+		cv2.putText(lane_overlay_template, label, (cx - 30, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+
+	def transform_lane_artifacts(frame_in: np.ndarray):
+		if reference_points is None or len(reference_points) < 10:
+			return lane_overlay_template, lane_mask_template, base_lanes
+
+		gray = cv2.cvtColor(frame_in, cv2.COLOR_BGR2GRAY)
+		tracked_points, status, _ = cv2.calcOpticalFlowPyrLK(reference_gray, gray, reference_points, None)
+		if tracked_points is None or status is None:
+			return lane_overlay_template, lane_mask_template, base_lanes
+
+		good_ref = reference_points[status.flatten() == 1]
+		good_cur = tracked_points[status.flatten() == 1]
+		if len(good_ref) < 10 or len(good_cur) < 10:
+			return lane_overlay_template, lane_mask_template, base_lanes
+
+		transform, _ = cv2.estimateAffinePartial2D(
+			good_ref,
+			good_cur,
+			method=cv2.RANSAC,
+			ransacReprojThreshold=3.0,
+		)
+		if transform is None:
+			return lane_overlay_template, lane_mask_template, base_lanes
+
+		warped_overlay = cv2.warpAffine(
+			lane_overlay_template,
+			transform,
+			(width, height),
+			flags=cv2.INTER_LINEAR,
+			borderMode=cv2.BORDER_CONSTANT,
+			borderValue=(0, 0, 0),
+		)
+		warped_mask = cv2.warpAffine(
+			lane_mask_template,
+			transform,
+			(width, height),
+			flags=cv2.INTER_NEAREST,
+			borderMode=cv2.BORDER_CONSTANT,
+			borderValue=0,
+		)
+
+		warped_lanes = []
+		for lane in base_lanes:
+			lane_f = lane.astype(np.float32)
+			warped_lane = cv2.transform(lane_f, transform)
+			warped_lane = np.clip(warped_lane, [0, 0], [width - 1, height - 1]).astype(np.int32)
+			warped_lanes.append(warped_lane)
+
+		return warped_overlay, warped_mask, warped_lanes
+
+	# Boundary lines between lanes: lane1|2, lane2|3, lane3|4
+	# Segment index convention for each lane polygon: [bl, br, tr, tl]
+	def lane_boundaries(lanes_for_frame: list[np.ndarray]):
+		b12 = (lanes_for_frame[0][0][3], lanes_for_frame[0][0][0])
+		b23 = (lanes_for_frame[1][0][3], lanes_for_frame[1][0][0])
+		b34 = (lanes_for_frame[2][0][3], lanes_for_frame[2][0][0])
+		return [b12, b23, b34]
+
+	boundary_band_px = 14
+	min_violation_seconds = 1.5
+	min_violation_frames = int(min_violation_seconds * fps)
+	violation_box_color = (255, 0, 255)  # Magenta
+	normal_box_color = (0, 220, 0)
+
+	tracks: dict[int, tuple[int, int]] = {}
+	overlap_counter: dict[int, int] = {}
+	next_id = 0
+	violation_ids: set[int] = set()
+	written = 0
+
+	def process(frame: np.ndarray) -> np.ndarray:
+		nonlocal next_id
+
+		warped_overlay, warped_mask, lanes_for_frame = transform_lane_artifacts(frame)
+		output = cv2.add(frame, warped_overlay)
+		masked_frame = cv2.bitwise_and(frame, frame, mask=warped_mask)
+
+		bounds = lane_boundaries(lanes_for_frame)
+		results = model(masked_frame, verbose=False)
+
+		detections = []
+		for result in results:
+			boxes = result.boxes.xyxy.cpu().numpy()
+			classes = result.boxes.cls.cpu().numpy()
+			for box, cls in zip(boxes, classes):
+				if int(cls) not in VEHICLE_CLASSES:
+					continue
+				x1, y1, x2, y2 = map(int, box)
+				cx = int((x1 + x2) / 2)
+				cy = int((y1 + y2) / 2)
+				detections.append((x1, y1, x2, y2, cx, cy))
+
+		# Build boundary-band mask for robust per-frame overlap checks.
+		boundary_mask = np.zeros((height, width), dtype=np.uint8)
+		for p1, p2 in bounds:
+			cv2.line(boundary_mask, tuple(map(int, p1)), tuple(map(int, p2)), 255, boundary_band_px * 2)
+
+		updated_tracks: dict[int, tuple[int, int]] = {}
+		for x1, y1, x2, y2, cx, cy in detections:
+			tid = nearest_tracker_id(cx, cy, tracks, max_match_distance=55.0)
+			if tid is None:
+				tid = next_id
+				next_id += 1
+
+			updated_tracks[tid] = (cx, cy)
+
+			x1c = max(0, min(width - 1, x1))
+			y1c = max(0, min(height - 1, y1))
+			x2c = max(0, min(width - 1, x2))
+			y2c = max(0, min(height - 1, y2))
+
+			over_boundary = False
+			if x2c > x1c and y2c > y1c:
+				roi = boundary_mask[y1c:y2c, x1c:x2c]
+				over_boundary = bool(np.any(roi > 0))
+
+			if over_boundary:
+				overlap_counter[tid] = overlap_counter.get(tid, 0) + 1
+			else:
+				overlap_counter[tid] = 0
+
+			is_violator = overlap_counter.get(tid, 0) >= min_violation_frames
+			if is_violator:
+				violation_ids.add(tid)
+
+			box_color = violation_box_color if is_violator else normal_box_color
+			cv2.rectangle(output, (x1, y1), (x2, y2), box_color, 3)
+			cv2.circle(output, (cx, cy), 5, (255, 255, 255), -1)
+
+			label = f"ID:{tid}"
+			if is_violator:
+				label += " LANE VIOLATION"
+			cv2.putText(output, label, (x1, max(25, y1 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.65, box_color, 2)
+
+		tracks.clear()
+		tracks.update(updated_tracks)
+
+		cv2.putText(
+			output,
+			f"Violations(triggered): {len(violation_ids)}",
+			(12, 30),
+			cv2.FONT_HERSHEY_SIMPLEX,
+			0.8,
+			violation_box_color,
+			2,
+		)
+		return output
+
+	# Process reference frame first, then rest
+	out.write(process(reference_frame))
+	written += 1
+
+	while True:
+		ret, frame = cap.read()
+		if not ret:
+			break
+		out.write(process(frame))
+		written += 1
+
+	cap.release()
+	out.release()
+
+	print("=" * 72)
+	print("UPDATEDWAY LANE VIOLATOR TEST")
+	print("=" * 72)
+	print(f"Output: {output_path}")
+	print(f"Frames written: {written}/{total_frames}")
+	print(f"Violation rule: bbox overlap with {boundary_band_px}px lane-boundary band for >= {min_violation_seconds:.1f}s")
+	print(f"Unique violating vehicles: {len(violation_ids)}")
+	print("=" * 72)
+
+
+if __name__ == "__main__":
+	main()
+

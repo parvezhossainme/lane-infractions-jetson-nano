@@ -1,0 +1,1 @@
+/home/parvezdev/fydp/.venv/bin/python /home/parvezdev/fydp/rt-detr-backbones/benchmark/evaluate_backbones.py --runs /home/parvezdev/fydp/rt-detr-backbones/dlanet/backbone_runs_dlanet.json --device cpu --output-dir /home/parvezdev/fydp/outputs/backbone_benchmark/dlanet_coco8

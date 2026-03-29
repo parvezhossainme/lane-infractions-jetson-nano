@@ -1,0 +1,26 @@
+__include__: [
+  '../../RT-DETR/rtdetrv2_pytorch/configs/rtdetrv2/rtdetrv2_r18vd_120e_coco.yml',
+]
+
+output_dir: ./output/rtdetrv2_mobilenetv3_large_120e_coco
+
+RTDETR:
+  backbone: TorchVisionModel
+
+TorchVisionModel:
+  name: mobilenet_v3_large
+  return_layers: ['6', '12', '16']
+  weights: DEFAULT
+
+HybridEncoder:
+  in_channels: [40, 112, 960]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  expansion: 1.0
+
+RTDETRTransformerv2:
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  feat_channels: [256, 256, 256]
+
+# Keep training schedule from the included 120-epoch baseline.

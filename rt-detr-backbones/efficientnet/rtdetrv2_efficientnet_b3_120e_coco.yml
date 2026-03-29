@@ -1,0 +1,23 @@
+__include__:
+  - ../../RT-DETR/rtdetrv2_pytorch/configs/rtdetrv2/rtdetrv2_r18vd_120e_coco.yml
+
+output_dir: ./output/rtdetrv2_efficientnet_b3_120e_coco
+
+RTDETR:
+  backbone: TorchVisionModel
+
+TorchVisionModel:
+  name: efficientnet_b3
+  return_layers: ['3', '5', '8']
+  weights: DEFAULT
+
+HybridEncoder:
+  in_channels: [48, 136, 1536]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  expansion: 1.0
+
+RTDETRTransformerv2:
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  feat_channels: [256, 256, 256]

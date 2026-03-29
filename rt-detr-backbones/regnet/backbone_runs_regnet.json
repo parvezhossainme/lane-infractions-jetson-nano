@@ -1,0 +1,9 @@
+[
+  {
+    "name": "rtdetr-regnet",
+    "framework": "rtdetr_pytorch",
+    "config": "rt-detr-backbones/regnet/rtdetr_regnet_6x_coco_eval.yml",
+    "checkpoint": "https://github.com/lyuwenyu/storage/releases/download/v0.1/rtdetr_r50vd_6x_coco_from_paddle.pth",
+    "checkpoint_mode": "tuning"
+  }
+]

@@ -1,0 +1,8 @@
+[
+  {
+    "name": "rtdetrv2-mobilenetv3-large-tuning",
+    "config": "rt-detr-backbones/mobilenet/rtdetrv2_mobilenetv3_large_120e_coco.yml",
+    "checkpoint": "https://github.com/lyuwenyu/storage/releases/download/v0.1/rtdetrv2_r50vd_6x_coco_ema.pth",
+    "checkpoint_mode": "tuning"
+  }
+]

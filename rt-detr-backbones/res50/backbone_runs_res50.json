@@ -1,0 +1,7 @@
+[
+  {
+    "name": "rtdetrv2-r50vd",
+    "config": "rt-detr-backbones/res50/rtdetrv2_res50_6x_coco_eval.yml",
+    "checkpoint": "https://github.com/lyuwenyu/storage/releases/download/v0.1/rtdetrv2_r50vd_6x_coco_ema.pth"
+  }
+]

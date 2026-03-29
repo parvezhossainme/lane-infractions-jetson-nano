@@ -1,0 +1,9 @@
+[ 
+  {
+    "name": "rtdetrv2-efficientnet-b3",
+    "config": "rt-detr-backbones/efficientnet/rtdetrv2_efficientnet_b3_120e_coco.yml",
+    "checkpoint": "/home/parvezdev/fydp/outputs/efficientnet_train_coco8_retry/best.pth",
+    "checkpoint_mode": "resume"
+  }
+]
+
