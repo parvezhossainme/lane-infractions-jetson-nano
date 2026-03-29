@@ -33,6 +33,15 @@ runs/
 output/
 output*/
 
+# Keep lightweight backbone benchmark reports versioned
+!outputs/
+outputs/*
+!outputs/backbone_benchmark/
+outputs/backbone_benchmark/*
+!outputs/backbone_benchmark/**/
+!outputs/backbone_benchmark/**/*.json
+!outputs/backbone_benchmark/**/*.md
+
 # Never upload videos
 *.mp4
 *.avi

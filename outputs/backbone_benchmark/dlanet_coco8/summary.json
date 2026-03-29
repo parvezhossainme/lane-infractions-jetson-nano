@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-03-29T11:13:53.109888Z",
+  "device": "cpu",
+  "runs_file": "/home/parvezdev/fydp/rt-detr-backbones/dlanet/backbone_runs_dlanet.json",
+  "results": [
+    {
+      "name": "rtdetr-dla34",
+      "status": "ok",
+      "config": "/home/parvezdev/fydp/rt-detr-backbones/dlanet/rtdetr_dla34_6x_coco_eval.yml",
+      "framework": "rtdetr_pytorch",
+      "checkpoint": "https://github.com/lyuwenyu/storage/releases/download/v0.1/rtdetr_r50vd_6x_coco_from_paddle.pth",
+      "checkpoint_mode": "tuning",
+      "log": "/home/parvezdev/fydp/outputs/backbone_benchmark/dlanet_coco8/rtdetr-dla34/stdout.log",
+      "AP@[0.50:0.95]_all_maxDets100": 0.0,
+      "AP@0.50_all_maxDets100": 0.0,
+      "AP@0.75_all_maxDets100": 0.0,
+      "AP@[0.50:0.95]_small_maxDets100": 0.0,
+      "AP@[0.50:0.95]_medium_maxDets100": 0.0,
+      "AP@[0.50:0.95]_large_maxDets100": 0.002,
+      "AR@[0.50:0.95]_all_maxDets1": 0.0,
+      "AR@[0.50:0.95]_all_maxDets10": 0.007,
+      "AR@[0.50:0.95]_all_maxDets100": 0.007,
+      "AR@[0.50:0.95]_small_maxDets100": 0.0,
+      "AR@[0.50:0.95]_medium_maxDets100": 0.0,
+      "AR@[0.50:0.95]_large_maxDets100": 0.08
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-03-29T10:20:18.569051Z",
+  "device": "cpu",
+  "runs_file": "/home/parvezdev/fydp/rt-detr-backbones/mobilenet/backbone_runs_mobilenet.json",
+  "results": [
+    {
+      "name": "rtdetrv2-mobilenetv3-large",
+      "status": "ok",
+      "config": "/home/parvezdev/fydp/rt-detr-backbones/mobilenet/rtdetrv2_mobilenetv3_large_120e_coco.yml",
+      "checkpoint": "/home/parvezdev/fydp/outputs/mobilenet_train_coco8/best.pth",
+      "checkpoint_mode": "resume",
+      "log": "/home/parvezdev/fydp/outputs/backbone_benchmark_mobilenet_coco8/rtdetrv2-mobilenetv3-large/stdout.log",
+      "AP@[0.50:0.95]_all_maxDets100": 0.0,
+      "AP@0.50_all_maxDets100": 0.0,
+      "AP@0.75_all_maxDets100": 0.0,
+      "AP@[0.50:0.95]_small_maxDets100": 0.0,
+      "AP@[0.50:0.95]_medium_maxDets100": 0.0,
+      "AP@[0.50:0.95]_large_maxDets100": 0.0,
+      "AR@[0.50:0.95]_all_maxDets1": 0.0,
+      "AR@[0.50:0.95]_all_maxDets10": 0.0,
+      "AR@[0.50:0.95]_all_maxDets100": 0.0,
+      "AR@[0.50:0.95]_small_maxDets100": 0.0,
+      "AR@[0.50:0.95]_medium_maxDets100": 0.0,
+      "AR@[0.50:0.95]_large_maxDets100": 0.0
+    }
+  ]
+}
