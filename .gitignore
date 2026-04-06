@@ -37,10 +37,11 @@ output*/
 !outputs/
 outputs/*
 !outputs/backbone_benchmark/
-outputs/backbone_benchmark/*
+outputs/backbone_benchmark/**
 !outputs/backbone_benchmark/**/
 !outputs/backbone_benchmark/**/*.json
 !outputs/backbone_benchmark/**/*.md
+!outputs/backbone_benchmark/**/*training_curves*.png
 
 # Never upload videos
 *.mp4
