@@ -93,20 +93,31 @@ def main() -> int:
 
     rows = load_rows(log_path)
     if not rows:
-        raise RuntimeError(f"No JSON epoch rows found in {log_path}")
+        raise RuntimeError(
+            f"No JSON epoch rows found in {log_path}. "
+            "This usually means training has not finished an epoch yet, or the run did not write per-epoch JSON stats. "
+            "Wait until log.txt contains lines with an 'epoch' field, then rerun this plot command."
+        )
+
+    epoch_rows = [row for row in rows if any(key.startswith('train_') or key.startswith('test_') for key in row)]
+    if not epoch_rows:
+        raise RuntimeError(
+            f"Found {len(rows)} epoch markers in {log_path}, but none contained train/test metrics to plot. "
+            "Wait for at least one completed epoch with JSON metrics in log.txt."
+        )
 
     output_image = Path(args.output_image).resolve() if args.output_image else log_path.parent / "rtdetr_res50_training_curves.png"
     output_image.parent.mkdir(parents=True, exist_ok=True)
 
-    box_x, box_y = extract_series(rows, "train_loss_bbox")
-    cls_x, cls_y = extract_series(rows, "train_loss_vfl")
-    obj_x, obj_y = extract_series(rows, "train_loss_giou")
+    box_x, box_y = extract_series(epoch_rows, "train_loss_bbox")
+    cls_x, cls_y = extract_series(epoch_rows, "train_loss_vfl")
+    obj_x, obj_y = extract_series(epoch_rows, "train_loss_giou")
 
     # COCO metric indices in test_coco_eval_bbox:
     # 0: AP@[0.50:0.95], 1: AP@0.50, 8: AR@100
-    prec_x, prec_y = extract_coco_index(rows, 1)
-    rec_x, rec_y = extract_coco_index(rows, 8)
-    map_x, map_y = extract_coco_index(rows, 0)
+    prec_x, prec_y = extract_coco_index(epoch_rows, 1)
+    rec_x, rec_y = extract_coco_index(epoch_rows, 8)
+    map_x, map_y = extract_coco_index(epoch_rows, 0)
 
     fig, axes = plt.subplots(3, 2, figsize=(12, 14))
     fig.suptitle(args.title, fontsize=16, fontweight="bold")
@@ -121,7 +132,7 @@ def main() -> int:
     plt.tight_layout(rect=[0, 0, 1, 0.97])
     fig.savefig(output_image, dpi=180)
     print(f"Saved plot: {output_image}")
-    print(f"Epoch rows: {len(rows)}")
+    print(f"Epoch rows: {len(epoch_rows)}")
     return 0
 
 

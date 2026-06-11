@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title desc">
+  <title id="title">Lane-wise Speed Violation Detection Pipeline</title>
+  <desc id="desc">Flowchart for lane-masked RT-DETR detection, vehicle tracking, speed estimation, lane assignment, and violation labelling.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { fill: #111827; font: 700 34px Arial, sans-serif; }
+      .sub { fill: #4b5563; font: 400 18px Arial, sans-serif; }
+      .box { stroke: #1f2937; stroke-width: 2.1; rx: 12; ry: 12; }
+      .io { fill: #e8f3ff; }
+      .prep { fill: #ecfdf3; }
+      .model { fill: #fff3df; }
+      .logic { fill: #f4f0ff; }
+      .decision { fill: #fff7ed; }
+      .out { fill: #fff0f3; }
+      .label { fill: #111827; font: 700 20px Arial, sans-serif; text-anchor: middle; }
+      .small { fill: #374151; font: 400 15.5px Arial, sans-serif; text-anchor: middle; }
+      .arrow { fill: none; stroke: #1f2937; stroke-width: 2.4; marker-end: url(#arrow); }
+      .thin { fill: none; stroke: #64748b; stroke-width: 1.8; marker-end: url(#arrow); stroke-dasharray: 7 7; }
+      .formula { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.5; rx: 9; ry: 9; }
+      .formulaText { fill: #334155; font: 700 17px Arial, sans-serif; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect class="bg" width="1500" height="900"/>
+  <text class="title" x="750" y="56" text-anchor="middle">Lane-wise Speed Violation Detection Pipeline</text>
+  <text class="sub" x="750" y="88" text-anchor="middle">Core method implemented in SpeedViolationEachLane.py</text>
+
+  <rect class="box io" x="70" y="150" width="220" height="115"/>
+  <text class="label" x="180" y="187">Input Frame</text>
+  <text class="small" x="180" y="216">Road video frame</text>
+  <text class="small" x="180" y="240">with FPS metadata</text>
+
+  <rect class="box prep" x="360" y="150" width="230" height="115"/>
+  <text class="label" x="475" y="187">Aligned Lanes</text>
+  <text class="small" x="475" y="216">Warp lane polygons</text>
+  <text class="small" x="475" y="240">and binary lane mask</text>
+
+  <rect class="box prep" x="660" y="150" width="230" height="115"/>
+  <text class="label" x="775" y="187">Masked Frame</text>
+  <text class="small" x="775" y="216">Keep only lane ROI</text>
+  <text class="small" x="775" y="240">Suppress background</text>
+
+  <rect class="box model" x="960" y="150" width="230" height="115"/>
+  <text class="label" x="1075" y="187">RT-DETR</text>
+  <text class="small" x="1075" y="216">Detect COCO vehicles</text>
+  <text class="small" x="1075" y="240">2, 3, 5, 7 classes</text>
+
+  <rect class="box logic" x="1240" y="150" width="210" height="115"/>
+  <text class="label" x="1345" y="187">Centroids</text>
+  <text class="small" x="1345" y="216">Box center points</text>
+  <text class="small" x="1345" y="240">cx, cy per detection</text>
+
+  <path class="arrow" d="M 290 207.5 L 360 207.5"/>
+  <path class="arrow" d="M 590 207.5 L 660 207.5"/>
+  <path class="arrow" d="M 890 207.5 L 960 207.5"/>
+  <path class="arrow" d="M 1190 207.5 L 1240 207.5"/>
+
+  <rect class="box logic" x="80" y="390" width="230" height="125"/>
+  <text class="label" x="195" y="428">Vehicle ID Match</text>
+  <text class="small" x="195" y="459">Nearest previous centroid</text>
+  <text class="small" x="195" y="484">max distance threshold</text>
+
+  <rect class="box logic" x="390" y="390" width="230" height="125"/>
+  <text class="label" x="505" y="428">Displacement</text>
+  <text class="small" x="505" y="459">Current centroid minus</text>
+  <text class="small" x="505" y="484">previous centroid</text>
+
+  <rect class="box logic" x="700" y="390" width="230" height="125"/>
+  <text class="label" x="815" y="428">Speed Estimate</text>
+  <text class="small" x="815" y="459">pixels per meter = 100</text>
+  <text class="small" x="815" y="484">convert m/s to km/h</text>
+
+  <rect class="box decision" x="1010" y="390" width="230" height="125"/>
+  <text class="label" x="1125" y="428">Lane Assignment</text>
+  <text class="small" x="1125" y="459">pointPolygonTest</text>
+  <text class="small" x="1125" y="484">centroid inside polygon</text>
+
+  <rect class="box decision" x="1300" y="390" width="150" height="125"/>
+  <text class="label" x="1375" y="428">Decision</text>
+  <text class="small" x="1375" y="459">speed below min</text>
+  <text class="small" x="1375" y="484">or above max</text>
+
+  <path class="arrow" d="M 1345 265 C 1345 330, 195 330, 195 390"/>
+  <path class="arrow" d="M 310 452.5 L 390 452.5"/>
+  <path class="arrow" d="M 620 452.5 L 700 452.5"/>
+  <path class="arrow" d="M 930 452.5 L 1010 452.5"/>
+  <path class="arrow" d="M 1240 452.5 L 1300 452.5"/>
+
+  <rect class="formula" x="570" y="590" width="360" height="68"/>
+  <text class="formulaText" x="750" y="619">speed(km/h) = displacement(px) / 100</text>
+  <text class="formulaText" x="750" y="642">x FPS x 3.6</text>
+  <path class="thin" d="M 815 515 L 760 590"/>
+
+  <rect class="box out" x="315" y="720" width="250" height="115"/>
+  <text class="label" x="440" y="757">Normal Vehicle</text>
+  <text class="small" x="440" y="787">Green bounding box</text>
+  <text class="small" x="440" y="811">speed label only</text>
+
+  <rect class="box out" x="625" y="720" width="250" height="115"/>
+  <text class="label" x="750" y="757">Violation Vehicle</text>
+  <text class="small" x="750" y="787">Red bounding box</text>
+  <text class="small" x="750" y="811">speed + VIOLATION label</text>
+
+  <rect class="box out" x="935" y="720" width="250" height="115"/>
+  <text class="label" x="1060" y="757">Annotated Output</text>
+  <text class="small" x="1060" y="787">Frame written to video</text>
+  <text class="small" x="1060" y="811">vehicle memory updated</text>
+
+  <path class="arrow" d="M 1375 515 C 1375 660, 750 660, 750 720"/>
+  <path class="arrow" d="M 875 777.5 L 935 777.5"/>
+</svg>

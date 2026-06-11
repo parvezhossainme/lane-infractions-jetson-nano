@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from datetime import datetime
 from pathlib import Path
+from collections import deque
 from ultralytics import RTDETR
 
 
@@ -85,8 +86,10 @@ pixels_per_meter = 100
 # Vehicle Tracking Memory
 # =========================
 vehicle_positions = {}
+vehicle_tracks = {}
 next_vehicle_id = 0
 max_match_distance = 30
+speed_history_len = 5
 
 
 # =========================
@@ -113,6 +116,8 @@ lane_colors = [
 normal_box_color = (40, 220, 40)
 violation_box_color = (30, 30, 230)
 text_color = (255, 255, 255)
+title_bar_color = (20, 20, 20)
+title_text_color = (255, 255, 255)
 
 
 # =========================
@@ -251,6 +256,17 @@ def process_frame(frame_in):
     overlay = cv2.add(frame_in, warped_overlay)
     masked_frame = cv2.bitwise_and(frame_in, frame_in, mask=warped_mask)
 
+    cv2.rectangle(overlay, (0, 0), (width - 1, 58), title_bar_color, -1)
+    cv2.putText(
+        overlay,
+        "Speed Violation Detection",
+        (20, 38),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.0,
+        title_text_color,
+        2,
+    )
+
     # =========================
     # RT-DETR Detection
     # =========================
@@ -291,14 +307,22 @@ def process_frame(frame_in):
             matched_id = next_vehicle_id
             next_vehicle_id += 1
 
-        prev_x, prev_y = vehicle_positions.get(matched_id, (cx, cy))
+        track = vehicle_tracks.setdefault(matched_id, deque(maxlen=speed_history_len))
+        track.append((cx, cy))
+
+        if len(track) >= 2:
+            prev_x, prev_y = track[0]
+            elapsed_seconds = (len(track) - 1) / fps
+        else:
+            prev_x, prev_y = cx, cy
+            elapsed_seconds = 0.0
 
         # =========================
         # Speed Calculation
         # =========================
         distance_pixels = np.sqrt((cx - prev_x) ** 2 + (cy - prev_y) ** 2)
         distance_meters = distance_pixels / pixels_per_meter
-        speed = distance_meters * fps * 3.6
+        speed = (distance_meters / elapsed_seconds) * 3.6 if elapsed_seconds > 0 else 0.0
 
         updated_positions[matched_id] = (cx, cy)
 
@@ -332,7 +356,7 @@ def process_frame(frame_in):
         cv2.rectangle(overlay, (x1, y1), (x2, y2), color, 4)
         cv2.circle(overlay, (cx, cy), 7, (255, 255, 255), -1)
 
-        text = f"{int(speed)} km/h"
+        text = f"{speed:.1f} km/h"
         if violator:
             text += " VIOLATION"
 

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="720" viewBox="0 0 1800 720" role="img" aria-labelledby="title desc">
+  <title id="title">UpdatedWay Illegal Stopping Detection Logic</title>
+  <desc id="desc">Flowchart of illegal stopping detection logic used by UpdatedWay tests with RT-DETR vehicle detections.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .bg { fill: #fff; }
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; text-anchor: middle; }
+      .sub { font: 400 17px Arial, sans-serif; fill: #4b5563; text-anchor: middle; }
+      .box { stroke: #1f2937; stroke-width: 2.2; rx: 12; ry: 12; }
+      .a { fill: #e8f3ff; } .b { fill: #ecfdf3; } .c { fill: #fff3df; } .d { fill: #f1edff; } .e { fill: #fff0f3; }
+      .label { font: 700 19px Arial, sans-serif; fill: #111827; text-anchor: middle; }
+      .txt { font: 400 15px Arial, sans-serif; fill: #374151; text-anchor: middle; }
+      .arrow { fill: none; stroke: #1f2937; stroke-width: 2.4; marker-end: url(#arrow); }
+      .note { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.5; rx: 9; ry: 9; }
+      .noteText { font: 700 15.5px Arial, sans-serif; fill: #334155; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect class="bg" width="1800" height="720"/>
+  <text class="title" x="900" y="50">Illegal Stopping Detection Logic</text>
+  <text class="sub" x="900" y="78">UpdatedWay/tests/test_illegal_stopping.py with violations/illegal_stopping detector</text>
+
+  <rect class="box a" x="45" y="150" width="205" height="120"/>
+  <text class="label" x="147.5" y="188">Input Frame</text>
+  <text class="txt" x="147.5" y="218">sample image/video</text>
+  <text class="txt" x="147.5" y="244">timestamp = frame/FPS</text>
+
+  <rect class="box c" x="305" y="150" width="220" height="120"/>
+  <text class="label" x="415" y="188">RT-DETR</text>
+  <text class="txt" x="415" y="218">detect vehicles</text>
+  <text class="txt" x="415" y="244">classes 2, 3, 5, 7</text>
+
+  <rect class="box b" x="580" y="120" width="245" height="150"/>
+  <text class="label" x="702.5" y="156">Regulation Zones</text>
+  <text class="txt" x="702.5" y="186">no stopping</text>
+  <text class="txt" x="702.5" y="212">no parking / bus stop</text>
+  <text class="txt" x="702.5" y="238">allowed zone</text>
+
+  <rect class="box d" x="880" y="150" width="225" height="120"/>
+  <text class="label" x="992.5" y="188">Vehicle Match</text>
+  <text class="txt" x="992.5" y="218">nearest center</text>
+  <text class="txt" x="992.5" y="244">max distance 50 px</text>
+
+  <rect class="box d" x="1160" y="150" width="230" height="120"/>
+  <text class="label" x="1275" y="188">Motion History</text>
+  <text class="txt" x="1275" y="218">movement list</text>
+  <text class="txt" x="1275" y="244">keep recent 10 values</text>
+
+  <rect class="box d" x="1445" y="150" width="250" height="120"/>
+  <text class="label" x="1570" y="188">Stationary Test</text>
+  <text class="txt" x="1570" y="218">avg recent movement</text>
+  <text class="txt" x="1570" y="244">&lt; 5 px threshold</text>
+
+  <rect class="box d" x="410" y="420" width="250" height="125"/>
+  <text class="label" x="535" y="458">Stop Duration</text>
+  <text class="txt" x="535" y="489">current time - start</text>
+  <text class="txt" x="535" y="515">must be at least 3 s</text>
+
+  <rect class="box e" x="720" y="390" width="350" height="185"/>
+  <text class="label" x="895" y="428">Zone Violation Rules</text>
+  <text class="txt" x="895" y="459">NO_STOPPING: any stopped vehicle</text>
+  <text class="txt" x="895" y="485">NO_PARKING: duration &gt; max</text>
+  <text class="txt" x="895" y="511">BUS_STOP: non-bus vehicle</text>
+  <text class="txt" x="895" y="537">LOADING: duration &gt; max</text>
+
+  <rect class="box e" x="1130" y="420" width="280" height="125"/>
+  <text class="label" x="1270" y="458">Violation Record</text>
+  <text class="txt" x="1270" y="489">type + severity</text>
+  <text class="txt" x="1270" y="515">duration + vehicle ID</text>
+
+  <rect class="box e" x="1470" y="420" width="250" height="125"/>
+  <text class="label" x="1595" y="458">Annotated Output</text>
+  <text class="txt" x="1595" y="489">zone overlay</text>
+  <text class="txt" x="1595" y="515">warning label</text>
+
+  <rect class="note" x="570" y="615" width="660" height="58"/>
+  <text class="noteText" x="900" y="640">Core decision: a matched vehicle is illegal only when it is stationary</text>
+  <text class="noteText" x="900" y="662">for the minimum time and violates the regulation of its current zone.</text>
+
+  <path class="arrow" d="M250 210 L305 210"/>
+  <path class="arrow" d="M525 210 L580 210"/>
+  <path class="arrow" d="M825 210 L880 210"/>
+  <path class="arrow" d="M1105 210 L1160 210"/>
+  <path class="arrow" d="M1390 210 L1445 210"/>
+  <path class="arrow" d="M1570 270 C1570 355,535 355,535 420"/>
+  <path class="arrow" d="M660 482.5 L720 482.5"/>
+  <path class="arrow" d="M1070 482.5 L1130 482.5"/>
+  <path class="arrow" d="M1410 482.5 L1470 482.5"/>
+</svg>

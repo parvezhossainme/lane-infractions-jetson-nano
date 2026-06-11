@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="760" viewBox="0 0 1300 760" role="img" aria-labelledby="title desc">
+  <title id="title">Lane Overlay and Motion Alignment Pipeline</title>
+  <desc id="desc">Flowchart for fixed lane geometry creation and per-frame optical-flow alignment.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { fill: #111827; font: 700 34px Arial, sans-serif; }
+      .sub { fill: #4b5563; font: 400 18px Arial, sans-serif; }
+      .box { stroke: #1f2937; stroke-width: 2.1; rx: 12; ry: 12; }
+      .a { fill: #e7f5ff; }
+      .b { fill: #ecfdf3; }
+      .c { fill: #fff7e6; }
+      .d { fill: #f4f0ff; }
+      .e { fill: #fff0f3; }
+      .label { fill: #111827; font: 700 21px Arial, sans-serif; text-anchor: middle; }
+      .small { fill: #374151; font: 400 16px Arial, sans-serif; text-anchor: middle; }
+      .arrow { fill: none; stroke: #1f2937; stroke-width: 2.5; marker-end: url(#arrow); }
+      .lane { fill: none; stroke-width: 5; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <rect class="bg" width="1300" height="760"/>
+  <text class="title" x="650" y="56" text-anchor="middle">Lane Overlay and Motion Alignment Pipeline</text>
+  <text class="sub" x="650" y="88" text-anchor="middle">Used by OnlyLaneDetect.py and SpeedViolationEachLane.py</text>
+
+  <rect class="box a" x="80" y="150" width="230" height="120"/>
+  <text class="label" x="195" y="188">Open Video</text>
+  <text class="small" x="195" y="219">Extract FPS and frame size</text>
+  <text class="small" x="195" y="244">Create output writer</text>
+
+  <rect class="box b" x="390" y="150" width="230" height="120"/>
+  <text class="label" x="505" y="188">Reference Frame</text>
+  <text class="small" x="505" y="219">Convert to grayscale</text>
+  <text class="small" x="505" y="244">Build feature mask</text>
+
+  <rect class="box c" x="700" y="150" width="230" height="120"/>
+  <text class="label" x="815" y="188">Track Features</text>
+  <text class="small" x="815" y="219">goodFeaturesToTrack</text>
+  <text class="small" x="815" y="244">Side and top regions</text>
+
+  <rect class="box d" x="990" y="150" width="230" height="120"/>
+  <text class="label" x="1105" y="188">Lane Template</text>
+  <text class="small" x="1105" y="219">Four road polygons</text>
+  <text class="small" x="1105" y="244">Draw lane labels</text>
+
+  <path class="arrow" d="M 310 210 L 390 210"/>
+  <path class="arrow" d="M 620 210 L 700 210"/>
+  <path class="arrow" d="M 930 210 L 990 210"/>
+
+  <rect class="box a" x="80" y="430" width="230" height="125"/>
+  <text class="label" x="195" y="468">Read Next Frame</text>
+  <text class="small" x="195" y="499">Convert frame to grayscale</text>
+  <text class="small" x="195" y="524">Process until EOF</text>
+
+  <rect class="box b" x="390" y="430" width="230" height="125"/>
+  <text class="label" x="505" y="468">KLT Optical Flow</text>
+  <text class="small" x="505" y="499">calcOpticalFlowPyrLK</text>
+  <text class="small" x="505" y="524">Reference to current frame</text>
+
+  <rect class="box c" x="700" y="430" width="230" height="125"/>
+  <text class="label" x="815" y="468">Affine Transform</text>
+  <text class="small" x="815" y="499">estimateAffinePartial2D</text>
+  <text class="small" x="815" y="524">RANSAC outlier rejection</text>
+
+  <rect class="box d" x="990" y="430" width="230" height="125"/>
+  <text class="label" x="1105" y="468">Warp Artifacts</text>
+  <text class="small" x="1105" y="499">Overlay and lane mask</text>
+  <text class="small" x="1105" y="524">Fallback to static template</text>
+
+  <rect class="box e" x="520" y="615" width="260" height="85"/>
+  <text class="label" x="650" y="650">Aligned Lane Output</text>
+  <text class="small" x="650" y="679">Overlay added to original frame</text>
+
+  <path class="arrow" d="M 1105 270 C 1105 350, 195 350, 195 430"/>
+  <path class="arrow" d="M 310 492 L 390 492"/>
+  <path class="arrow" d="M 620 492 L 700 492"/>
+  <path class="arrow" d="M 930 492 L 990 492"/>
+  <path class="arrow" d="M 1105 555 C 1105 657, 780 657, 780 657"/>
+
+</svg>

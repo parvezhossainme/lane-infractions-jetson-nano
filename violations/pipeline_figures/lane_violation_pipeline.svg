@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="720" viewBox="0 0 1800 720" role="img" aria-labelledby="title desc">
+  <title id="title">UpdatedWay Lane Violation Detection Logic</title>
+  <desc id="desc">Flowchart of the UpdatedWay lane boundary overlap violation logic from test_lane_violator_detection.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .bg { fill: #fff; }
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; text-anchor: middle; }
+      .sub { font: 400 17px Arial, sans-serif; fill: #4b5563; text-anchor: middle; }
+      .box { stroke: #1f2937; stroke-width: 2.2; rx: 12; ry: 12; }
+      .a { fill: #e8f3ff; } .b { fill: #ecfdf3; } .c { fill: #fff3df; } .d { fill: #f1edff; } .e { fill: #fff0f3; }
+      .label { font: 700 19px Arial, sans-serif; fill: #111827; text-anchor: middle; }
+      .txt { font: 400 15px Arial, sans-serif; fill: #374151; text-anchor: middle; }
+      .arrow { fill: none; stroke: #1f2937; stroke-width: 2.4; marker-end: url(#arrow); }
+      .note { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.5; rx: 9; ry: 9; }
+      .noteText { font: 700 15.5px Arial, sans-serif; fill: #334155; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect class="bg" width="1800" height="720"/>
+  <text class="title" x="900" y="50">Lane Violation Detection Logic</text>
+  <text class="sub" x="900" y="78">UpdatedWay/tests/test_lane_violator_detection,py using UpdatedWay lane geometry</text>
+
+  <rect class="box a" x="45" y="150" width="200" height="120"/>
+  <text class="label" x="145" y="188">Input Video</text>
+  <text class="txt" x="145" y="218">Sample-Main.mp4</text>
+  <text class="txt" x="145" y="244">read reference frame</text>
+
+  <rect class="box b" x="300" y="120" width="230" height="150"/>
+  <text class="label" x="415" y="156">Lane Geometry</text>
+  <text class="txt" x="415" y="186">4 fixed lane polygons</text>
+  <text class="txt" x="415" y="212">same as OnlyLaneDetect</text>
+  <text class="txt" x="415" y="238">overlay + binary mask</text>
+
+  <rect class="box b" x="585" y="120" width="230" height="150"/>
+  <text class="label" x="700" y="156">Motion Align</text>
+  <text class="txt" x="700" y="186">KLT optical flow</text>
+  <text class="txt" x="700" y="212">RANSAC affine warp</text>
+  <text class="txt" x="700" y="238">warp lanes and mask</text>
+
+  <rect class="box d" x="870" y="120" width="235" height="150"/>
+  <text class="label" x="987.5" y="156">Boundary Bands</text>
+  <text class="txt" x="987.5" y="186">lane1|2, lane2|3,</text>
+  <text class="txt" x="987.5" y="212">lane3|4 boundaries</text>
+  <text class="txt" x="987.5" y="238">14 px band mask</text>
+
+  <rect class="box c" x="1160" y="150" width="220" height="120"/>
+  <text class="label" x="1270" y="188">RT-DETR</text>
+  <text class="txt" x="1270" y="218">run on masked frame</text>
+  <text class="txt" x="1270" y="244">vehicles only</text>
+
+  <rect class="box d" x="1435" y="150" width="220" height="120"/>
+  <text class="label" x="1545" y="188">ID Tracking</text>
+  <text class="txt" x="1545" y="218">nearest centroid</text>
+  <text class="txt" x="1545" y="244">max distance 55 px</text>
+
+  <rect class="box d" x="455" y="420" width="250" height="125"/>
+  <text class="label" x="580" y="458">Overlap Test</text>
+  <text class="txt" x="580" y="489">bbox ROI intersects</text>
+  <text class="txt" x="580" y="515">boundary-band mask</text>
+
+  <rect class="box e" x="765" y="405" width="300" height="155"/>
+  <text class="label" x="915" y="443">Violation Rule</text>
+  <text class="txt" x="915" y="474">increment overlap counter</text>
+  <text class="txt" x="915" y="500">reset when no overlap</text>
+  <text class="txt" x="915" y="526">trigger at 1.5 s x FPS</text>
+
+  <rect class="box e" x="1135" y="420" width="265" height="125"/>
+  <text class="label" x="1267.5" y="458">Lane Violation</text>
+  <text class="txt" x="1267.5" y="489">magenta box</text>
+  <text class="txt" x="1267.5" y="515">ID + LANE VIOLATION</text>
+
+  <rect class="box e" x="1470" y="420" width="250" height="125"/>
+  <text class="label" x="1595" y="458">Output Video</text>
+  <text class="txt" x="1595" y="489">annotated frames</text>
+  <text class="txt" x="1595" y="515">unique violation count</text>
+
+  <rect class="note" x="570" y="605" width="660" height="58"/>
+  <text class="noteText" x="900" y="630">Core decision: a vehicle becomes a lane violator only after its bounding box</text>
+  <text class="noteText" x="900" y="652">overlaps a warped lane-boundary band continuously for at least 1.5 seconds.</text>
+
+  <path class="arrow" d="M245 210 L300 210"/>
+  <path class="arrow" d="M530 195 L585 195"/>
+  <path class="arrow" d="M815 195 L870 195"/>
+  <path class="arrow" d="M1105 210 L1160 210"/>
+  <path class="arrow" d="M1380 210 L1435 210"/>
+  <path class="arrow" d="M1545 270 C1545 355,580 355,580 420"/>
+  <path class="arrow" d="M705 482.5 L765 482.5"/>
+  <path class="arrow" d="M1065 482.5 L1135 482.5"/>
+  <path class="arrow" d="M1400 482.5 L1470 482.5"/>
+</svg>

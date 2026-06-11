@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="720" viewBox="0 0 1800 720" role="img" aria-labelledby="title desc">
+  <title id="title">UpdatedWay Speed Violation Detection Logic</title>
+  <desc id="desc">Flowchart of the UpdatedWay lane-aware speed violation detection logic from SpeedViolationEachLane.py.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .bg { fill: #fff; }
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; text-anchor: middle; }
+      .sub { font: 400 17px Arial, sans-serif; fill: #4b5563; text-anchor: middle; }
+      .box { stroke: #1f2937; stroke-width: 2.2; rx: 12; ry: 12; }
+      .a { fill: #e8f3ff; } .b { fill: #ecfdf3; } .c { fill: #fff3df; } .d { fill: #f1edff; } .e { fill: #fff0f3; }
+      .label { font: 700 19px Arial, sans-serif; fill: #111827; text-anchor: middle; }
+      .txt { font: 400 15px Arial, sans-serif; fill: #374151; text-anchor: middle; }
+      .arrow { fill: none; stroke: #1f2937; stroke-width: 2.4; marker-end: url(#arrow); }
+      .note { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.5; rx: 9; ry: 9; }
+      .noteText { font: 700 15.5px Arial, sans-serif; fill: #334155; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect class="bg" width="1800" height="720"/>
+  <text class="title" x="900" y="50">Speed Violation Detection Logic</text>
+  <text class="sub" x="900" y="78">UpdatedWay/detectors/SpeedViolationEachLane.py</text>
+
+  <rect class="box a" x="45" y="150" width="200" height="120"/>
+  <text class="label" x="145" y="188">Input Video</text>
+  <text class="txt" x="145" y="218">Sample-Main.mp4</text>
+  <text class="txt" x="145" y="244">FPS, width, height</text>
+
+  <rect class="box b" x="300" y="120" width="230" height="150"/>
+  <text class="label" x="415" y="156">Lane Setup</text>
+  <text class="txt" x="415" y="186">4 fixed polygons</text>
+  <text class="txt" x="415" y="212">lane mask + overlay</text>
+  <text class="txt" x="415" y="238">limits: 5-20, 10-25,</text>
+  <text class="txt" x="415" y="260">15-35, 20-45 km/h</text>
+
+  <rect class="box b" x="585" y="120" width="230" height="150"/>
+  <text class="label" x="700" y="156">Motion Align</text>
+  <text class="txt" x="700" y="186">reference frame</text>
+  <text class="txt" x="700" y="212">KLT optical flow</text>
+  <text class="txt" x="700" y="238">RANSAC affine warp</text>
+
+  <rect class="box c" x="870" y="150" width="210" height="120"/>
+  <text class="label" x="975" y="188">Lane Mask</text>
+  <text class="txt" x="975" y="218">bitwise road ROI</text>
+  <text class="txt" x="975" y="244">mask non-lane areas</text>
+
+  <rect class="box c" x="1135" y="150" width="220" height="120"/>
+  <text class="label" x="1245" y="188">RT-DETR</text>
+  <text class="txt" x="1245" y="218">vehicles only</text>
+  <text class="txt" x="1245" y="244">classes 2, 3, 5, 7</text>
+
+  <rect class="box d" x="1410" y="150" width="220" height="120"/>
+  <text class="label" x="1520" y="188">Centroid Track</text>
+  <text class="txt" x="1520" y="218">nearest previous ID</text>
+  <text class="txt" x="1520" y="244">max distance 30 px</text>
+
+  <rect class="box d" x="455" y="420" width="235" height="125"/>
+  <text class="label" x="572.5" y="458">Speed Estimate</text>
+  <text class="txt" x="572.5" y="489">displacement / 100</text>
+  <text class="txt" x="572.5" y="515">x FPS x 3.6</text>
+
+  <rect class="box d" x="750" y="420" width="235" height="125"/>
+  <text class="label" x="867.5" y="458">Lane Assignment</text>
+  <text class="txt" x="867.5" y="489">pointPolygonTest</text>
+  <text class="txt" x="867.5" y="515">centroid inside lane</text>
+
+  <rect class="box e" x="1045" y="405" width="290" height="155"/>
+  <text class="label" x="1190" y="443">Violation Rule</text>
+  <text class="txt" x="1190" y="474">speed &lt; 1 km/h</text>
+  <text class="txt" x="1190" y="500">or outside lane</text>
+  <text class="txt" x="1190" y="526">or speed outside lane limit</text>
+
+  <rect class="box e" x="1410" y="420" width="250" height="125"/>
+  <text class="label" x="1535" y="458">Annotated Output</text>
+  <text class="txt" x="1535" y="489">green normal box</text>
+  <text class="txt" x="1535" y="515">red VIOLATION label</text>
+
+  <rect class="note" x="600" y="605" width="600" height="58"/>
+  <text class="noteText" x="900" y="630">Core decision: lane-specific min/max speed is checked after RT-DETR detection,</text>
+  <text class="noteText" x="900" y="652">centroid tracking, speed estimation, and lane membership assignment.</text>
+
+  <path class="arrow" d="M245 210 L300 210"/>
+  <path class="arrow" d="M530 195 L585 195"/>
+  <path class="arrow" d="M815 210 L870 210"/>
+  <path class="arrow" d="M1080 210 L1135 210"/>
+  <path class="arrow" d="M1355 210 L1410 210"/>
+  <path class="arrow" d="M1520 270 C1520 355,572.5 355,572.5 420"/>
+  <path class="arrow" d="M690 482.5 L750 482.5"/>
+  <path class="arrow" d="M985 482.5 L1045 482.5"/>
+  <path class="arrow" d="M1335 482.5 L1410 482.5"/>
+</svg>

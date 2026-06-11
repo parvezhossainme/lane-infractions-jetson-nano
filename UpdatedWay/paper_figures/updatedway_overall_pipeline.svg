@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="760" viewBox="0 0 1600 760" role="img" aria-labelledby="title desc">
+  <title id="title">UpdatedWay Overall Detector Pipeline</title>
+  <desc id="desc">Research-paper flowchart showing video input, lane alignment, vehicle detection, tracking, speed and lane violation decision, and annotated outputs.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#243447"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { fill: #17202a; font: 700 36px Arial, sans-serif; }
+      .subtitle { fill: #4b5563; font: 400 18px Arial, sans-serif; }
+      .stage { stroke: #243447; stroke-width: 2.2; rx: 12; ry: 12; }
+      .input { fill: #e8f3ff; }
+      .prep { fill: #eef8ef; }
+      .model { fill: #fff3df; }
+      .logic { fill: #f1edff; }
+      .output { fill: #ffeef2; }
+      .label { fill: #17202a; font: 700 22px Arial, sans-serif; text-anchor: middle; }
+      .small { fill: #344054; font: 400 17px Arial, sans-serif; text-anchor: middle; }
+      .tiny { fill: #4b5563; font: 400 15px Arial, sans-serif; text-anchor: middle; }
+      .arrow { fill: none; stroke: #243447; stroke-width: 2.6; marker-end: url(#arrow); }
+      .note { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.6; rx: 10; ry: 10; }
+      .noteText { fill: #334155; font: 400 15px Arial, sans-serif; text-anchor: middle; }
+      .lane1 { fill: #f97316; }
+      .lane2 { fill: #0ea5e9; }
+      .lane3 { fill: #22c55e; }
+      .lane4 { fill: #d946ef; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="760"/>
+  <text class="title" x="800" y="58">UpdatedWay Detector Pipeline</text>
+  <text class="subtitle" x="800" y="88" text-anchor="middle">Lane-aware vehicle detection and speed-violation analysis from road video</text>
+
+  <rect class="stage input" x="70" y="165" width="210" height="125"/>
+  <text class="label" x="175" y="205">Input Video</text>
+  <text class="small" x="175" y="236">Sample road frames</text>
+  <text class="tiny" x="175" y="262">FPS, width, height</text>
+
+  <rect class="stage prep" x="340" y="165" width="245" height="125"/>
+  <text class="label" x="462.5" y="202">Frame Setup</text>
+  <text class="small" x="462.5" y="232">Read reference frame</text>
+  <text class="tiny" x="462.5" y="258">Initialize writer and metadata</text>
+
+  <rect class="stage prep" x="645" y="145" width="260" height="165"/>
+  <text class="label" x="775" y="184">Lane Geometry</text>
+  <text class="small" x="775" y="214">Four fixed lane polygons</text>
+  <text class="tiny" x="775" y="240">Lane-specific speed ranges</text>
+  <rect x="693" y="262" width="34" height="12" class="lane1"/>
+  <rect x="742" y="262" width="34" height="12" class="lane2"/>
+  <rect x="791" y="262" width="34" height="12" class="lane3"/>
+  <rect x="840" y="262" width="34" height="12" class="lane4"/>
+
+  <rect class="stage prep" x="965" y="165" width="250" height="125"/>
+  <text class="label" x="1090" y="202">Motion Alignment</text>
+  <text class="small" x="1090" y="232">KLT optical flow</text>
+  <text class="tiny" x="1090" y="258">RANSAC affine warp</text>
+
+  <rect class="stage model" x="1280" y="165" width="250" height="125"/>
+  <text class="label" x="1405" y="202">Lane Masking</text>
+  <text class="small" x="1405" y="232">Restrict frame to road ROI</text>
+  <text class="tiny" x="1405" y="258">Reduce non-road detections</text>
+
+  <rect class="stage model" x="70" y="430" width="250" height="135"/>
+  <text class="label" x="195" y="468">RT-DETR Detection</text>
+  <text class="small" x="195" y="498">Vehicle classes only</text>
+  <text class="tiny" x="195" y="525">car, motorcycle, bus, truck</text>
+
+  <rect class="stage logic" x="385" y="430" width="250" height="135"/>
+  <text class="label" x="510" y="468">Centroid Tracking</text>
+  <text class="small" x="510" y="498">Nearest-neighbor ID match</text>
+  <text class="tiny" x="510" y="525">Frame-to-frame displacement</text>
+
+  <rect class="stage logic" x="700" y="430" width="250" height="135"/>
+  <text class="label" x="825" y="468">Speed Estimate</text>
+  <text class="small" x="825" y="498">pixels to meters</text>
+  <text class="tiny" x="825" y="525">speed = distance x FPS x 3.6</text>
+
+  <rect class="stage logic" x="1015" y="430" width="250" height="135"/>
+  <text class="label" x="1140" y="468">Violation Decision</text>
+  <text class="small" x="1140" y="498">Check lane membership</text>
+  <text class="tiny" x="1140" y="525">Flag below/above lane limit</text>
+
+  <rect class="stage output" x="1330" y="430" width="220" height="135"/>
+  <text class="label" x="1440" y="468">Outputs</text>
+  <text class="small" x="1440" y="498">Annotated video</text>
+  <text class="tiny" x="1440" y="525">Boxes, labels, reports</text>
+
+  <path class="arrow" d="M 280 227.5 L 340 227.5"/>
+  <path class="arrow" d="M 585 227.5 L 645 227.5"/>
+  <path class="arrow" d="M 905 227.5 L 965 227.5"/>
+  <path class="arrow" d="M 1215 227.5 L 1280 227.5"/>
+  <path class="arrow" d="M 1405 290 C 1405 355, 195 355, 195 430"/>
+  <path class="arrow" d="M 320 497.5 L 385 497.5"/>
+  <path class="arrow" d="M 635 497.5 L 700 497.5"/>
+  <path class="arrow" d="M 950 497.5 L 1015 497.5"/>
+  <path class="arrow" d="M 1265 497.5 L 1330 497.5"/>
+
+  <rect class="note" x="360" y="630" width="880" height="58"/>
+  <text class="noteText" x="800" y="654">Implementation modules: OnlyLaneDetect.py for lane visualization, SpeedViolationEachLane.py for lane-aware speed violation,</text>
+  <text class="noteText" x="800" y="676">and vehicledetect_rtdetr_mobilenet.py for MobileNet RT-DETR video detection and JSON reporting.</text>
+</svg>
